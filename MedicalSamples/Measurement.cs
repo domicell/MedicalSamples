@@ -6,16 +6,36 @@ using System.Threading.Tasks;
 
 namespace MedicalSamples
 {
-    enum MeasurementType
+    public enum MeasurementType
     {
-        Temperature,
-        HeartRate,
-        SpO2
+        TEMP,   //Temperature
+        RATE,   //HeartRate,
+        SPO2    //SpO2
     }
-    class Measurement
+    public class Measurement
     {
-        private DateTime measurementTime;
-        private Double measurementValue;
-        private MeasurementType type;
+        /// <summary>
+        /// Original sample time
+        /// </summary>
+        public DateTime measurementTime;
+        public Double measurementValue;
+        public MeasurementType type;
+
+        /// <summary>
+        /// Rounded sample time to nearest 5 minutes: 00:00, 05:00, 10:00, ...
+        /// </summary>
+        public DateTime SampleTime
+        {
+            get
+            {
+                DateTime d = measurementTime;
+                if (!((d.Minute % 5) == 0 && d.Second == 0)) //do not add 5 minutes if 00:00, 05:00, 10:00 
+                {
+                    d = new DateTime(d.Year, d.Month, d.Day, d.Hour, (d.Minute / 5) * 5, 0);
+                    d = d.AddMinutes(5);
+                }
+                return d;
+            }
+        }
     }
 }
