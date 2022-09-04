@@ -8,28 +8,27 @@ using System.Reflection;
 namespace MedicalSamplesTest
 {
     public class Tests
-    {
-        
-        List<Measurement>? listMeasurements;
-
+    {        
         [SetUp]
         public void Setup()
         {
             //load sample data
-            listMeasurements = new List<Measurement>()
-            {
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:00:00"), type = MeasurementType.TEMP, measurementValue = 235.79 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:59:59"), type = MeasurementType.TEMP, measurementValue = 335.79 },
-                new Measurement(){ measurementTime = DateTime.Parse("2021-02-28T23:59:59"), type = MeasurementType.TEMP, measurementValue = 435.79 },
+            //moved to Measurements class to have test data in both projects
+            
+            //listMeasurements = new List<Measurement>()
+            //{
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:00:00"), type = MeasurementType.TEMP, measurementValue = 235.79 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:59:59"), type = MeasurementType.TEMP, measurementValue = 335.79 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2021-02-28T23:59:59"), type = MeasurementType.TEMP, measurementValue = 435.79 },
 
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:04:45"), type = MeasurementType.TEMP, measurementValue = 35.79 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:01:18"), type = MeasurementType.SPO2, measurementValue = 98.78 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:09:07"), type = MeasurementType.TEMP, measurementValue = 35.01 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:03:34"), type = MeasurementType.SPO2, measurementValue = 96.49 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:02:01"), type = MeasurementType.TEMP, measurementValue = 35.82 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:05:00"), type = MeasurementType.SPO2, measurementValue = 97.17 },
-                new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:05:01"), type = MeasurementType.SPO2, measurementValue = 95.08 }
-            };
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:04:45"), type = MeasurementType.TEMP, measurementValue = 35.79 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:01:18"), type = MeasurementType.SPO2, measurementValue = 98.78 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:09:07"), type = MeasurementType.TEMP, measurementValue = 35.01 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:03:34"), type = MeasurementType.SPO2, measurementValue = 96.49 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:02:01"), type = MeasurementType.TEMP, measurementValue = 35.82 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:05:00"), type = MeasurementType.SPO2, measurementValue = 97.17 },
+            //    new Measurement(){ measurementTime = DateTime.Parse("2017-01-03T10:05:01"), type = MeasurementType.SPO2, measurementValue = 95.08 }
+            //};
         }
 
         [Test]
@@ -89,17 +88,18 @@ namespace MedicalSamplesTest
         /// <summary>
         /// Generate sample data
         /// </summary>
-        Dictionary<MeasurementType, List<Measurement>> GetSamples()
+        static Dictionary<MeasurementType, List<Measurement>> GetSamples()
         {
+            List<Measurement> listMeasurements = Measurements.GetTestMeasurements;
+
             if (listMeasurements == null || listMeasurements.Count == 0)
             {
                 Console.WriteLine($"{MethodBase.GetCurrentMethod()?.Name}: No records in sequence");
                 return new Dictionary<MeasurementType, List<Measurement>>();
             }
 
-            Measurements measurements = new Measurements();
             DateTime startTime = listMeasurements.Min(x => x.measurementTime);
-            var result = measurements.sample(startTime, listMeasurements);
+            var result = Measurements.sample(startTime, listMeasurements);
             return result;
         }
 
@@ -107,7 +107,7 @@ namespace MedicalSamplesTest
         /// Prepare data for test cases
         /// </summary>
         /// <returns>flatten dictionary</returns>
-        List<Measurement> GetFlatList()
+        static List<Measurement> GetFlatList()
         {
             var result = GetSamples();
             var flat = result.SelectMany(s => s.Value).ToList(); //flatten dictionary
